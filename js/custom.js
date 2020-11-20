@@ -474,7 +474,7 @@ $(function() {
                 withdraw: 0,
                 direct_bonus: 0,
                 match_bonus: 0,
-				launch_date: 1602201600
+				launch_date: 1605859200
             },
 			current_date: new Date().getTime()/1e3,
             user: {
