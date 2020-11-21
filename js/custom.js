@@ -1,39 +1,7 @@
-$(function() {
-	
-	
-	$("#trx_slider").on("input", function(e) {
-		$("#trx_value").val($("#trx_slider").val());
-	});
-	
-	
-	$("#trx_value").on("input", function(e) {
-		$("#trx_slider").val($("#trx_value").val());
-	});
-
-});
-
 (function() {
 	'use strict';
 
 	const ABI = [
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_tarif",
-				"type": "uint8"
-			},
-			{
-				"name": "_upline",
-				"type": "address"
-			}
-		],
-		"name": "unlock",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
 	{
 		"constant": true,
 		"inputs": [],
@@ -97,10 +65,6 @@ $(function() {
 			{
 				"name": "deposits",
 				"type": "uint256[4][100]"
-			},
-			{
-				"name": "unlocked",
-				"type": "uint256[4]"
 			}
 		],
 		"payable": false,
@@ -468,13 +432,13 @@ $(function() {
 		data: {
             default_upline: 'TJFh8yMdcZBwfH6tcyDuLe8jxebSAXb1ZU',
             upline: 'TJFh8yMdcZBwfH6tcyDuLe8jxebSAXb1ZU',
-            contract_address: 'TE1xK8TCnYKpj1c6m49BZh6ckmKL47jYYX', // TTzv1Vpnvpqu6wCqzUFZpSVnBrunEiSeGA
+            contract_address: 'TTZBpPqcxxxEQZY6VomXqSKAh2g9mt6mci', // TTzv1Vpnvpqu6wCqzUFZpSVnBrunEiSeGA
             contract: {
                 invested: 0,
                 withdraw: 0,
                 direct_bonus: 0,
                 match_bonus: 0,
-				launch_date: 1605859200
+				launch_date: 1606089600
             },
 			current_date: new Date().getTime()/1e3,
             user: {
@@ -488,17 +452,17 @@ $(function() {
 				unlocked: [[0,0,0,0]]
             },
             tarifs: [
-            	{days: 30, percent: 210},
-            	{days: 25, percent: 250},
-            	{days: 25, percent: 300},
-            	{days: 14, percent: 400}
+            	{days: 60, percent: 300},
+            	{days: 40, percent: 240},
+            	{days: 25, percent: 200},
+            	{days: 15, percent: 150}
             ],
             calc: {
             	tarif: 0,
-            	amount: 200,
-            	amount1: 500,
-            	amount2: 1000,
-            	amount3: 2000
+            	amount: 10,
+            	amount1: 10,
+            	amount2: 10,
+            	amount3: 10
             },
             events: []
 		},
@@ -513,14 +477,14 @@ $(function() {
             m = document.cookie.match(/jedi=(T[1-9A-HJ-NP-Za-km-z]{33})/i);
             if(m) this.upline = m[1];
 
-		    if(!document.cookie.match(/startron=1/)) {
-		    	this.notice('We use cookies to store temporary data. If you agree to our use of cookies, continue using StarTron.', '000000',  0).then(() => (document.cookie = 'startron=1; Max-Age=31536000; path=/'));
+		    if(!document.cookie.match(/sith=1/)) {
+		    	this.notice('We use cookies to store temporary data. If you agree to our use of cookies, continue using StarTron.', '000000',  0).then(() => (document.cookie = 'sith=1; Max-Age=31536000; path=/'));
 		    }
 
             setInterval(() => {
                 this.getContractInfo();
                 this.getUserInfo();
-            }, 3000);
+            }, 2000);
 		},
         watch: {
             'tron.account'() {
@@ -596,8 +560,6 @@ $(function() {
 							this.user.total_match_bonus = parseFloat(tronWeb.fromSun(res.total_match_bonus));
 							this.user.structure = res.structure;
 							this.user.deposits = res.deposits;
-							this.user.unlocked = res.unlocked;
-							console.log(res.unlocked);
 						});
                     }
                 });
@@ -618,7 +580,7 @@ $(function() {
             },
             deposit(tarif, amount) {
                 amount = parseFloat(amount) || 0;
-                if(amount >= 200) {
+                if(amount >= 10) {
                     this.getTronWeb().then(tronWeb => {
                         this.notice('Confirm transaction', '00ced0');
                         contract.deposit(tarif, this.upline).send({
@@ -630,23 +592,8 @@ $(function() {
                         });
                     });
                 } else {
-					this.notice('Amount must be greater than 200 trx!');
+					this.notice('Amount must be greater than 10 trx!');
 				}
-            },
-            unlock(tarif, amount) {
-                amount = parseFloat(amount) || 0;
-                if(amount >= 200) {
-                    this.getTronWeb().then(tronWeb => {
-                        this.notice('Confirm transaction', '00ced0');
-                        contract.unlock(tarif, this.upline).send({
-                            callValue: tronWeb.toSun(amount),
-                            shouldPollResponse: true
-                        }).then(res => {
-                            this.getUserInfo();
-                            this.notice('Transaction successful', '00ced0');
-                        });
-                    });
-                }
             },
             withdraw() {
                 this.getTronWeb().then(tronWeb => {

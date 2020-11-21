@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="description" content="Decentralized short-term investments powered by the tron blockchain technology.">
-<title>StarTRON</title>
+<title>STARTRON.XYZ</title>
 <link rel="stylesheet" href="fonts/import.css">
 <link rel="stylesheet" href="css/reset.css">
 <link rel="stylesheet" href="css/jqueryui.css">
@@ -37,8 +37,9 @@
 	<div class="container">
 		<div class="sub">
 			<h6>&check;&nbsp; Verified Contract</h6>
-			<h6>&check;&nbsp; Up to 20% daily</h6>
-			<h6>&check;&nbsp; Up to 15% referral</h6>
+			<h6>&check;&nbsp; Up to 10% daily</h6>
+			<h6>&check;&nbsp; Up to 20% referral bonus</h6>
+			<h6>&check;&nbsp; Up to 300% return of investment</h6>
 		</div>
 	</div>
 	
@@ -51,13 +52,13 @@
 			<h5>Referral Bonus:</h5><h6 id="total_refer">{{ user.total_match_bonus }}</h6>
 			<h5 v-if="contract.launch_date < current_date">Withdrawn TRX:</h5><h6 id="total_refer" v-if="contract.launch_date < current_date">{{ user.total_withdrawn }}</h6>
 		</div>
-		<div class="sub" v-if="contract.launch_date > current_date">
-			<h4>Withdraw available in {{ countdown(new Date(contract.launch_date * 1000)).toString() }} </h4>
-		</div>
-		<div class="sub" v-if="contract.launch_date < current_date">
+		<div class="sub">
 			<h5>Current Withdrawable</h5>
 			<h6>{{ user.for_withdraw }}</h6>
-			<button id="btn_withdraw" @click.prevent="withdraw()" style="background: linear-gradient(60deg, #006653, #00ced0)">WITHDRAW</button>
+			<button v-if="contract.launch_date < current_date" id="btn_withdraw" @click.prevent="withdraw()" style="background: linear-gradient(60deg, #006653, #00ced0)">WITHDRAW</button>
+		</div>
+		<div class="sub" v-if="contract.launch_date > current_date">
+			<h4>Withdraw available after official launching.</h4>
 		</div>
 	</div>
 	<div class="container" v-if="user.total_invested > 0 && tronWeb != undefined">
@@ -76,49 +77,34 @@
 	
 	<div class="container" style="background: linear-gradient(-140deg, #333, #000)">
 		<div class="sub">
-			<h1>Basic PLAN</h1>
-			<h4>210% in 30 days &middot; 7% daily roi &middot; Minimum 200 trx</h4>
-			<input type="number" min="200" placeholder="200 trx" value="200" id="trx_value" v-model.number="calc.amount" @change="calc.amount = calc.amount < 200 ? 200 : calc.amount">
+			<h1>plan i</h1>
+			<h4>300% in 60 days &middot; 5% daily roi</h4>
+			<input type="number" min="10" placeholder="10 trx" value="10" id="trx_value" v-model.number="calc.amount" @change="calc.amount = calc.amount < 10 ? 10 : calc.amount">
 			<button id="btn_invest" @click.prevent="deposit(0, calc.amount)">deposit</button>
 		</div>
 	</div>
 	<div class="container" style="background: linear-gradient(-140deg, #ccc, #555)">
-		<div class="sub" v-if="user.unlocked[1] == 1">
-			<h1>Silver PLAN</h1>
-			<h4>250% in 25 days &middot; 10% daily roi &middot; Minimum 500 trx</h4>
-			<input type="number" min="500" placeholder="500 trx" value="500" id="trx_value1" v-model.number="calc.amount1" @change="calc.amount1 = calc.amount1 < 500 ? 500 : calc.amount1">
+		<div class="sub">
+			<h1>plan ii</h1>
+			<h4>240% in 40 days &middot; 6% daily roi</h4>
+			<input type="number" min="10" placeholder="10 trx" value="10" id="trx_value1" v-model.number="calc.amount1" @change="calc.amount1 = calc.amount1 < 10 ? 10 : calc.amount1">
 			<button id="btn_invest1" @click.prevent="deposit(1, calc.amount1)">deposit</button>
-		</div>
-		<div class="sub" v-else>
-			<h2>Silver PLAN</h2>
-			<h1>250% in 25 days &middot; 10% daily roi &middot; Minimum 500 trx</h1>
-			<button id="btn_unlock1" @click.prevent="unlock(1, 500)">unlock price: 500 trx</button>
 		</div>
 	</div>
 	<div class="container" style="background: linear-gradient(-140deg, #ffcb00, #93430d)">
-		<div class="sub" v-if="user.unlocked[2] == 1">
-			<h1>Gold PLAN</h1>
-			<h4>300% in 25 days &middot; 12% daily roi &middot; Minimum 1000 trx</h4>
-			<input type="number" min="1000" placeholder="1000 trx" value="1000" id="trx_value2" v-model.number="calc.amount2" @change="calc.amount2 = calc.amount2 < 1000 ? 1000 : calc.amount2">
+		<div class="sub">
+			<h1>plan iii</h1>
+			<h4>200% in 25 days &middot; 8% daily roi</h4>
+			<input type="number" min="10" placeholder="10 trx" value="10" id="trx_value2" v-model.number="calc.amount2" @change="calc.amount2 = calc.amount2 < 10 ? 10 : calc.amount2">
 			<button id="btn_invest2" @click.prevent="deposit(2, calc.amount2)">deposit</button>
-		</div>
-		<div class="sub" v-else>
-			<h2>Gold PLAN</h2>
-			<h1>300% in 25 days &middot; 12% daily roi &middot; Minimum 1000 trx</h1>
-			<button id="btn_unlock2" @click.prevent="unlock(2, 1000)">unlock price: 1000 trx</button>
 		</div>
 	</div>
 	<div class="container" style="background: linear-gradient(60deg, #006653, #00ced0)">
-		<div class="sub" v-if="user.unlocked[3] == 1">
-			<h1>Platinum PLAN</h1>
-			<h4>400% in 20 days &middot; 20% daily roi &middot; Minimum 2000 trx</h4>
-			<input type="number" min="2000" placeholder="2000 trx" value="2000" id="trx_value3" v-model.number="calc.amount3" @change="calc.amount3 = calc.amount3 < 2000 ? 2000 : calc.amount3">
+		<div class="sub">
+			<h1>plan iv</h1>
+			<h4>150% in 15 days &middot; 10% daily roi</h4>
+			<input type="number" min="10" placeholder="10 trx" value="10" id="trx_value3" v-model.number="calc.amount3" @change="calc.amount3 = calc.amount3 < 10 ? 10 : calc.amount3">
 			<button id="btn_invest3" @click.prevent="deposit(3, calc.amount3)">deposit</button>
-		</div>
-		<div class="sub" v-else>
-			<h2>Platinum PLAN</h2>
-			<h1>400% in 20 days &middot; 20% daily roi &middot; Minimum 2000 trx</h1>
-			<button id="btn_unlock3" @click.prevent="unlock(3, 2000)">unlock price: 2000 trx</button>
 		</div>
 	</div>
 	
@@ -126,26 +112,26 @@
 	
 		<div class="sub" v-if="contract.launch_date > current_date">
 			<h1>Pre-launch Event</h1>
-			<h4>Invite your friends and gain additional referral bonus (+5%) on every level!</h4>
+			<h4>Invite your friends before official launch and gain additional 5% referral bonus on every level!</h4>
 			<table>
 				<thead><th>Level</th><th>Referral Bonus</th><th v-if="user.total_invested > 0">Referrals</th></thead>
-				<tr><td>1</td><td><span v-if="contract.launch_date > current_date" highlight>7.5% (+5%) &#128293;</span><span v-else>7.5%</span></td><td v-if="user.total_invested > 0" id="ref_lv1">{{ user.structure[0] }}</td></tr>
-				<tr><td>2</td><td><span v-if="contract.launch_date > current_date" highlight>4% (+5%) </span><span v-else>4%</span></td><td v-if="user.total_invested > 0" id="ref_lv2">{{ user.structure[1] }}</td></tr>
-				<tr><td>3</td><td><span v-if="contract.launch_date > current_date" highlight>2.5% (+5%) </span><span v-else>2.5%</span></td><td v-if="user.total_invested > 0" id="ref_lv3">{{ user.structure[2] }}</td></tr>
-				<tr><td>4</td><td><span v-if="contract.launch_date > current_date" highlight>1% (+5%) </span><span v-else>1%</span></td><td v-if="user.total_invested > 0" id="ref_lv4">{{ user.structure[3] }}</td></tr>
+				<tr><td>1</td><td><span v-if="contract.launch_date > current_date" highlight>10% (+5%) &#128293;</span><span v-else>10%</span></td><td v-if="user.total_invested > 0" id="ref_lv1">{{ user.structure[0] }}</td></tr>
+				<tr><td>2</td><td><span v-if="contract.launch_date > current_date" highlight>5% (+5%) </span><span v-else>5%</span></td><td v-if="user.total_invested > 0" id="ref_lv2">{{ user.structure[1] }}</td></tr>
+				<tr><td>3</td><td><span v-if="contract.launch_date > current_date" highlight>3% (+5%) </span><span v-else>3%</span></td><td v-if="user.total_invested > 0" id="ref_lv3">{{ user.structure[2] }}</td></tr>
+				<tr><td>4</td><td><span v-if="contract.launch_date > current_date" highlight>2% (+5%) </span><span v-else>2%</span></td><td v-if="user.total_invested > 0" id="ref_lv4">{{ user.structure[3] }}</td></tr>
 			</table>
 		</div>
 		
 		
 		<div class="sub" v-if="contract.launch_date <= current_date">
 			<h1>Referral Dashboard</h1>
-			<h4>Always earn a percentage of every deposit.</h4>
+			<h4>Share your referral link with your partners and get additional bonus when they invest!</h4>
 			<table>
 				<thead><th>Level</th><th>Referral Bonus</th><th>Referrals</th></thead>
-				<tr><td>1</td><td><span v-if="contract.launch_date > current_date" highlight>7.5% (+5%) &#128293;</span><span v-else>7.5%</span></td><td id="ref_lv1">{{ user.structure[0] }}</td></tr>
-				<tr><td>2</td><td><span v-if="contract.launch_date > current_date" highlight>4% (+5%) </span><span v-else>4%</span></td><td id="ref_lv2">{{ user.structure[1] }}</td></tr>
-				<tr><td>3</td><td><span v-if="contract.launch_date > current_date" highlight>2.5% (+5%) </span><span v-else>2.5%</span></td><td id="ref_lv3">{{ user.structure[2] }}</td></tr>
-				<tr><td>4</td><td><span v-if="contract.launch_date > current_date" highlight>1% (+5%) </span><span v-else>1%</span></td><td id="ref_lv4">{{ user.structure[3] }}</td></tr>
+				<tr><td>1</td><td><span v-if="contract.launch_date > current_date" highlight>10% (+5%) &#128293;</span><span v-else>10%</span></td><td id="ref_lv1">{{ user.structure[0] }}</td></tr>
+				<tr><td>2</td><td><span v-if="contract.launch_date > current_date" highlight>5% (+5%) </span><span v-else>5%</span></td><td id="ref_lv2">{{ user.structure[1] }}</td></tr>
+				<tr><td>3</td><td><span v-if="contract.launch_date > current_date" highlight>3% (+5%) </span><span v-else>3%</span></td><td id="ref_lv3">{{ user.structure[2] }}</td></tr>
+				<tr><td>4</td><td><span v-if="contract.launch_date > current_date" highlight>2% (+5%) </span><span v-else>2%</span></td><td id="ref_lv4">{{ user.structure[3] }}</td></tr>
 			</table>
 		</div>
 		
@@ -154,21 +140,16 @@
 			<h6>Referred by</h6>
 			<h5>{{ upline }}</h5>
 		</div>
-		<div class="sub" v-if="user.total_invested > 0">
+		<div class="sub">
 			<h6>Your Referral Link</h6>
 			<h5>{{ location.origin }}/?ref={{ tron.account }}</h5>
 			<button class="copytext" @click="copyText(location.origin + '/?ref=' + tron.account)">COPY</button>
-		</div>
-		<div class="sub" v-if="user.total_invested == 0">
-			<h6>Deposit first to get your referral link.</h6>
 		</div>
 	</div>
 
 	<div class="container">
 		<div class="sub">
-			<h6>Questions?</h6>
-			<button id="view_telegram" @click="window.open('https://t.me/TronWinner')">JOIN OUR TELEGRAM GROUP &nbsp;&nbsp;[&#x2197;]</button>
-			<button id="view_contract" @click="window.open('https://tronscan.org/#/contract/TE1xK8TCnYKpj1c6m49BZh6ckmKL47jYYX/code')">VERIFIED SMART CONTRACT &nbsp;&nbsp;[&#x2197;]</button>
+			<button id="view_contract" @click="window.open('https://tronscan.org/#/contract/TTZBpPqcxxxEQZY6VomXqSKAh2g9mt6mci/code')">VERIFIED SMART CONTRACT &nbsp;&nbsp;[&#x2197;]</button>
 		</div>
 	</div>
 	
@@ -186,6 +167,6 @@
 </div>
 
 <script src="js/vue.js"></script>
-<script src="js/custom.js?v=1"></script>
+<script src="js/custom.js?v=2"></script>
 </body>
 </html>
